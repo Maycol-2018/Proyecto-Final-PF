@@ -1,5 +1,7 @@
 import Oraculo._
 import ReconstCadenas._
+import ReconstruirCadenaTurbo._
+import ReconstruirCadenaTurboPar._
 import scala.util.Random
 
 val random = new Random()
