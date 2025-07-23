@@ -1,32 +1,28 @@
 package object ReconstruirCadenaTurboPar {
   import Oraculo.Oraculo
   import Oraculo.alfabeto
+  import scala.collection.parallel.CollectionConverters._
 
   def reconstruirCadenaTurboPar(umbral: Int)(n: Int, Ψ: Oraculo): Seq[Char] = {
-    var SC: Set[Seq[Char]] = Set(Seq.empty)
-    var k = 1
-
-    while (k <= n) {
+    def expand(SC: Set[Seq[Char]]): Option[Seq[Char]] = {
       val candidatos = for {
-        s <- SC
-        c <- alfabeto
-      } yield s :+ c
+        s1 <- SC
+        s2 <- SC
+      } yield s1 ++ s2
 
-      val filtrado = if (candidatos.size >= umbral) {
-        val seqC = candidatos.toSeq
-        val (yes, _) = seqC.partition(Ψ)
-        yes.toSet // Aprovechamos la paralelización implícita
-      } else {
-        candidatos.filter(Ψ)
-      }
+      val filtrados: Set[Seq[Char]] =
+        if (candidatos.size >= umbral)
+          candidatos.toSeq.par.filter(Ψ).seq.toSet
+        else
+          candidatos.filter(Ψ)
 
-      SC = filtrado
-
-      SC.find(_.length == n) match {
-        case Some(result) => return result
-        case None => k = k * 2
+      filtrados.find(_.length == n) match {
+        case Some(result) => Some(result)
+        case None if filtrados.nonEmpty => expand(filtrados)
+        case None => None
       }
     }
-    Seq.empty
+
+    expand(alfabeto.map(Seq(_)).toSet).getOrElse(Seq.empty)
   }
 }

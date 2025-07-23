@@ -3,22 +3,21 @@ package object ReconstruirCadenaTurbo {
   import Oraculo.alfabeto
 
   def reconstruirCadenaTurbo(n: Int, Ψ: Oraculo): Seq[Char] = {
-    var SC: Set[Seq[Char]] = Set(Seq.empty)
-    var k = 1
-
-    while (k <= n) {
+    def expand(SC: Set[Seq[Char]]): Option[Seq[Char]] = {
       val candidatos = for {
-        s <- SC
-        c <- alfabeto
-      } yield s :+ c
+        s1 <- SC
+        s2 <- SC
+      } yield s1 ++ s2
 
-      SC = candidatos.filter(Ψ) // consultamos al oráculo
+      val filtrados = candidatos.filter(Ψ)
 
-      SC.find(_.length == n) match {
-        case Some(result) => return result
-        case None => k = k * 2 // paso "turbo": duplicamos k
+      filtrados.find(_.length == n) match {
+        case Some(result) => Some(result)
+        case None if filtrados.nonEmpty => expand(filtrados)
+        case None => None
       }
     }
-    Seq.empty
+
+    expand(alfabeto.map(Seq(_)).toSet).getOrElse(Seq.empty)
   }
 }
