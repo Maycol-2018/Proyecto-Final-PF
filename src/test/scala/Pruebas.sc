@@ -108,6 +108,28 @@ val s1_2048 = ss2_2048(10)
 val s2_2048 = ss2_4096(10)
 val s1_4096 = ss2_4096(11)
 
+// =============================
+// Pruebas ReconstruirCadetaTurboPar
+// =============================
+
+def pruebasTurboPar(ss: Seq[Seq[Char]]) = for {
+  s <- ss
+  o = crearOraculo(costoOraculo)(s)
+} yield (s.length, s, reconstruirCadenaTurboPar(4)(s.length, o))
+
+// Pruebas por lotes - TurboPar
+pruebasTurboPar(ss1_10)
+pruebasTurboPar(ss1_16.slice(0,10))
+pruebasTurboPar(ss1_16.slice(0,11))
+pruebasTurboPar(ss1_16.slice(0,12))
+pruebasTurboPar(ss1_16.slice(0,13))
+pruebasTurboPar(ss1_16.slice(0,14))
+pruebasTurboPar(ss1_16.slice(0,15))
+pruebasTurboPar(ss1_16)
+pruebasTurboPar(ss2_1024)
+pruebasTurboPar(ss2_2048)
+pruebasTurboPar(ss2_4096)
+
 
 // Pruebas funcionales
 
