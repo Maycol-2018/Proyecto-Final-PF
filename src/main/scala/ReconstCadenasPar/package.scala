@@ -63,6 +63,39 @@ package object ReconstCadenasPar {
     }
   }
 
+  def reconstruirCadenaTurboMejoradoPar(n: Int, o: Oraculo): Seq[Char] = {
+
+    def filtrar(sc: Set[Seq[Char]], k: Int): Set[Seq[Char]] = {
+      val combinaciones = sc.toIndexedSeq
+      val size = combinaciones.size
+
+      val resultados = for (i <- 0 until size) yield task {
+        val s1 = combinaciones(i)
+        (0 until size).flatMap { j =>
+          val s2 = combinaciones(j)
+          val s = s1 ++ s2
+          if (s.sliding(k).forall(sc.contains)) Some(s) else None
+        }
+      }
+
+      resultados.flatMap(_.join()).toSet
+    }
+
+    @annotation.tailrec
+    def construir(sc: Set[Seq[Char]], k: Int): Seq[Char] = {
+      if (k >= n) {
+        sc.find(o).getOrElse(throw new Exception("No se pudo reconstruir la cadena"))
+      } else {
+        val filtered = filtrar(sc, k)
+        val valid = filtered.filter(o)
+        construir(valid, 2 * k)
+      }
+    }
+
+    val sc1: Set[Seq[Char]] = alfabeto.map(c => Seq(c)).toSet
+    construir(sc1, 1)
+  }
+
 
   val sec = List('a', 'g', 'g', 'a')
   val or = crearOraculo(1)(sec)
