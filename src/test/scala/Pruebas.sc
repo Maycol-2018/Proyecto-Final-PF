@@ -1,6 +1,9 @@
 import Oraculo._
 import ReconstCadenas._
+import ReconstCadenasPar._
 import scala.util.Random
+import org.scalameter.measure
+
 
 val random = new Random()
 
@@ -17,7 +20,7 @@ val costoOraculo = 1
 
 val sec1=Seq('a', 'c', 'c', 'a')
 val sec2 = Seq('a', 'c', 'g', 'c', 'a')
-val sec3=secAlAzar(10,Seq())
+val sec3=secAlAzar(8,Seq())
 
 val or_1=crearOraculo(costoOraculo)(sec1)
 val or_2=crearOraculo(costoOraculo)(sec2)
@@ -106,12 +109,19 @@ val s1_2048 = ss2_2048(10)
 val s2_2048 = ss2_4096(10)
 val s1_4096 = ss2_4096(11)
 
-
 // Pruebas funcionales
+
+// Secuencias de longitud 4
+
+val secIng4 = ss1_16(3)
+reconstruirCadenaIngenuo(secIng4.length, crearOraculo(costoOraculo)(secIng4))
+reconstruirCadenaMejorado(secIng4.length, crearOraculo(costoOraculo)(secIng4))
+
+
 
 // secuencias de longitud 8
 reconstruirCadenaIngenuo(s1_8.length, crearOraculo(costoOraculo)(s1_8))
-reconstruirCadenaIngenuo(s2_8.length, crearOraculo(costoOraculo)(s2_8))
+
 reconstruirCadenaMejorado(s1_8.length, crearOraculo(costoOraculo)(s1_8))
 reconstruirCadenaMejorado(s2_8.length, crearOraculo(costoOraculo)(s2_8))
 reconstruirCadenaTurbo(s1_8.length, crearOraculo(costoOraculo)(s1_8))
@@ -120,6 +130,13 @@ reconstruirCadenaTurboMejorada(s1_8.length, crearOraculo(costoOraculo)(s1_8))
 reconstruirCadenaTurboMejorada(s2_8.length, crearOraculo(costoOraculo)(s2_8))
 reconstruirCadenaTurboAcelerada(s1_8.length, crearOraculo(costoOraculo)(s1_8))
 reconstruirCadenaTurboAcelerada(s2_8.length, crearOraculo(costoOraculo)(s2_8))
+
+// Secuencias de longitud 10
+val secIng10 = ss1_16(9)
+reconstruirCadenaIngenuo(secIng10.length, crearOraculo(costoOraculo)(secIng10))
+
+
+
 // secuencias de longitud 16
 reconstruirCadenaMejorado(s1_16.length, crearOraculo(costoOraculo)(s1_16))
 reconstruirCadenaTurbo(s1_16.length, crearOraculo(costoOraculo)(s1_16))
@@ -274,3 +291,47 @@ pruebasTurboAcelerada(ss1_16)
 pruebasTurboAcelerada(ss2_1024)
 pruebasTurboAcelerada(ss2_2048)
 pruebasTurboAcelerada(ss2_4096)
+
+
+// ------------------------ Medidas de desempeño ----------------------------------
+// reconstruirCadenaIngenuo
+
+// Secuencia de longitud 4
+val secIngenua4 = measure{ reconstruirCadenaIngenuo(secIng4.length, crearOraculo(costoOraculo)(secIng4))}
+val parIngenua4 = measure{reconstruirCadenaIngenuoPar(2)(secIng4.length, crearOraculo(costoOraculo)(secIng4))}
+
+// Secuencia de longitud 8
+val secIngenua8 = measure{ reconstruirCadenaIngenuo(s1_8.length, crearOraculo(costoOraculo)(s1_8))}
+val parIngenua8 = measure{reconstruirCadenaIngenuoPar(2)(s1_8.length, crearOraculo(costoOraculo)(s1_8))}
+
+// Secuencia de longitud 10
+val secIngenuo10 = measure{reconstruirCadenaIngenuo(secIng10.length, crearOraculo(costoOraculo)(secIng10))}
+val parIngenuo10 = measure{reconstruirCadenaIngenuoPar(4)(secIng10.length, crearOraculo(costoOraculo)(secIng10))}
+
+
+// reconstruirCadenaMejorado
+
+// Secuencia de longitud 4
+val secMejorado4 = measure{reconstruirCadenaMejorado(secIng4.length, crearOraculo(costoOraculo)(secIng4))}
+val parMejorado4 = measure{reconstruirCadenaMejoradoPar(2)(secIng4.length, crearOraculo(costoOraculo)(secIng4))}
+
+// Secuencia de longitud 16
+val secMejorado16 = measure{reconstruirCadenaMejorado(s1_16.length, crearOraculo(costoOraculo)(s1_16))}
+val parMejorado16 = measure{reconstruirCadenaMejoradoPar(4)(s1_16.length, crearOraculo(costoOraculo)(s1_16))}
+
+
+// Secuencia de longitud 64
+val secMejorado64 = measure{reconstruirCadenaMejorado(s1_64.length, crearOraculo(costoOraculo)(s1_64))}
+val parMejorado64 = measure{reconstruirCadenaMejoradoPar(4)(s1_64.length, crearOraculo(costoOraculo)(s1_64))}
+
+
+// Secuencia de longitud 256
+val secMejorado256 = measure{reconstruirCadenaMejorado(s1_256.length, crearOraculo(costoOraculo)(s1_256))}
+val parMejorado256 = measure{reconstruirCadenaMejoradoPar(8)(s1_256.length, crearOraculo(costoOraculo)(s1_256))}
+
+
+// Secuencia de longitud 1024
+val secMejorado1024 = measure{reconstruirCadenaMejorado(s1_1024.length, crearOraculo(costoOraculo)(s1_1024))}
+val parMejorado1024 = measure{reconstruirCadenaMejoradoPar(12)(s1_1024.length, crearOraculo(costoOraculo)(s1_1024))}
+
+
