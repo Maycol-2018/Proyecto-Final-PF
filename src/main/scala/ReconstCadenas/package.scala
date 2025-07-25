@@ -30,6 +30,32 @@ package object ReconstCadenas {
 
     resultado.getOrElse(Seq.empty)
   }
+
+  def reconstruirCadenaTurboMejorado(n: Int, o: Oraculo): Seq[Char] = {
+
+    def filtrar(sc: Set[Seq[Char]], k: Int): Set[Seq[Char]] = {
+      val combinaciones = for {
+        s1 <- sc
+        s2 <- sc
+        s = s1 ++ s2
+        if s.sliding(k).forall(sc.contains)
+      } yield s
+      combinaciones.toSet
+    }
+
+    def construir(sc: Set[Seq[Char]], k: Int): Seq[Char] = {
+      if (k >= n) {
+        sc.find(o).getOrElse(throw new Exception("No se pudo reconstruir la cadena"))
+      } else {
+        val filtered = filtrar(sc, k)
+        val valid = filtered.filter(o)
+        construir(valid, 2 * k)
+      }
+    }
+
+    val sc1: Set[Seq[Char]] = alfabeto.map(c => Seq(c)).toSet
+    construir(sc1, 1)
+  }
   
 }
 
